@@ -1,0 +1,9 @@
+current directory: /app/bundle/ruby/3.4.0/gems/websocket-driver-0.7.7/ext/websocket-driver
+/usr/local/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /app/bundle/ruby/3.4.0/gems/websocket-driver-0.7.7/ext/websocket-driver
+make DESTDIR\= sitearchdir\=./.gem.20250315-783-axrtki sitelibdir\=./.gem.20250315-783-axrtki clean
+current directory: /app/bundle/ruby/3.4.0/gems/websocket-driver-0.7.7/ext/websocket-driver
+make DESTDIR\= sitearchdir\=./.gem.20250315-783-axrtki sitelibdir\=./.gem.20250315-783-axrtki
+make failedNo such file or directory - make

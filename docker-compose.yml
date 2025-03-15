@@ -28,8 +28,9 @@ services:
     volumes:
       - ./rails_app:/app  # Código de Rails
       - ./rails_data:/app/data # Volumen persistente dentro del proyecto
+      - ./rails_log:/app/log # Volumen persistente para logs
+      - ./rails_tmp:/app/tmp # Volumen persistente para archivos temporales
     working_dir: /app
-    command: bash -c "bundle install && rails db:migrate && rails s -b 0.0.0.0"
     networks:
       - app_network
     depends_on:
@@ -37,6 +38,7 @@ services:
       - rabbitmq
     ports:
       - "3000:3000"
+    command: bash -c "bundle install && bundle exec rake db:create db:migrate && bundle exec rails s -b '0.0.0.0'"
 
   python_app:
     build: ./flask_app  # Usará el Dockerfile dentro de flask_app

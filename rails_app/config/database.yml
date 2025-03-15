@@ -4,12 +4,19 @@ default: &default
   pool: 5
   username: user
   password: password
-  host: postgres_db
+  host: postgres_db # Este es el nombre del contenedor de PostgreSQL en tu docker-compose.yml
 
 development:
   <<: *default
-  database: shopdb
+  database: shopdb_development  # Puedes cambiar el nombre del DB si lo deseas
 
 test:
   <<: *default
   database: shopdb_test
+
+production:
+  <<: *default
+  database: shopdb_production
+  username: <%= ENV['DB_USERNAME'] %>  # Se recomienda usar variables de entorno para la producción
+  password: <%= ENV['DB_PASSWORD'] %>  # Lo mismo con la contraseña
+  host: postgres_db  # Asegúrate de que el nombre del contenedor sea correcto
