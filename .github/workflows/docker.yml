@@ -1,40 +1,55 @@
-name: 🚀 Automatización de Contenedores con Docker
+name: CI/CD con Docker Compose
 
 on:
   push:
     branches:
-      - main  # Se ejecuta cuando hay cambios en la rama 'main'
+      - main
   pull_request:
+    branches:
+      - main
 
 jobs:
-  despliegue:
-    runs-on: ubuntu-latest  # Ejecuta en una máquina con Ubuntu
+  construir_y_probar:
+    runs-on: ubuntu-latest
+
+    services:
+      base_de_datos:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: shopdb
+        ports:
+          - 5432:5432
+
+      cola_de_mensajes:
+        image: rabbitmq:management
+        ports:
+          - 5672:5672
+          - 15672:15672
 
     steps:
-      - name: 📥 Clonar el repositorio
+      - name: Descargar código
         uses: actions/checkout@v3
 
-      - name: 🐳 Instalar Docker y Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+      - name: Instalar Docker Compose
+        run: sudo apt-get install -y docker-compose
 
-      - name: 📦 Iniciar los contenedores con Docker Compose
-        run: |
-          docker-compose up -d
-          sleep 10  # Espera unos segundos para que los servicios arranquen
+      - name: Construir y levantar contenedores
+        run: docker-compose up -d --build
 
-      - name: 🔎 Verificar que los contenedores están en ejecución
-        run: docker ps -a
+      - name: Verificar contenedores en ejecución
+        run: docker ps
 
-      - name: 📜 Aplicar migraciones en la base de datos de Rails
-        run: docker exec rails_app rails db:migrate
+      - name: Ejecutar migraciones de Rails
+        run: docker-compose exec -T ruby_app rails db:migrate
 
-      - name: ✅ Ejecutar pruebas en la aplicación Rails
-        run: docker exec rails_app rspec
+      - name: Ejecutar pruebas en Rails
+        run: docker-compose exec -T ruby_app rails test
 
-      - name: ✅ Ejecutar pruebas en la aplicación Flask
-        run: docker exec flask_app pytest
+      - name: Ejecutar pruebas en Flask
+        run: docker-compose exec -T python_app pytest
 
-      - name: 🛑 Detener y limpiar los contenedores
+      - name: Apagar los contenedores
+        if: always()
         run: docker-compose down

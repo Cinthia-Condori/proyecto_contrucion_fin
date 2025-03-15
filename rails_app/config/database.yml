@@ -1,0 +1,15 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: user
+  password: password
+  host: postgres_db
+
+development:
+  <<: *default
+  database: shopdb
+
+test:
+  <<: *default
+  database: shopdb_test
