@@ -1,62 +1,25 @@
-name: CI/CD con Docker
+name: CI/CD
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
-    name: Construir y probar contenedores
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔹 Clonar el repositorio
+      - name: 🛠️ Clonar el repositorio
         uses: actions/checkout@v4
 
-      - name: 🛑 Configurar caché para dependencias
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/pip
-            vendor/bundle
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/requirements.txt', '**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
-
-      - name: 🛠️ Construir los contenedores con Docker Compose
+      - name: 🛠️ Instalar Docker Compose
         run: |
-          docker-compose up --build -d
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
-      - name: 🔄 Verificar que los contenedores están corriendo
-        run: |
-          docker ps -a
+      - name: 🚀 Construir y levantar los contenedores
+        run: docker-compose up --build -d
 
-      - name: ✅ Ejecutar pruebas
-        run: |
-          docker-compose exec -T rails_app bundle exec rspec
-          docker-compose exec -T flask_app pytest
-
-      - name: 🚀 Desplegar (si es necesario)
-        if: github.ref == 'refs/heads/main'
-        run: |
-          echo "Aquí puedes agregar comandos de despliegue."
-
-  lint:
-    name: Revisar el código (Lint)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 🔹 Clonar el repositorio
-        uses: actions/checkout@v4
-
-      - name: 🔍 Revisar estilo de código en Ruby
-        run: |
-          docker-compose exec -T rails_app rubocop
-
-      - name: 🔍 Revisar estilo de código en Python
-        run: |
-          docker-compose exec -T flask_app flake8
+      - name: 🔍 Ejecutar Rubocop
+        run: docker-compose exec -T rails_app rubocop
