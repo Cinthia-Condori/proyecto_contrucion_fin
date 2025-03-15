@@ -1,52 +1,62 @@
-name: CI/CD para aplicación Dockerizada  # Nombre del flujo de trabajo
+name: CI/CD con Docker
 
 on:
   push:
     branches:
-      - main  # Se ejecuta cuando hay cambios en la rama 'main'
+      - main
   pull_request:
     branches:
-      - main  # También en los pull requests hacia 'main'
+      - main
 
 jobs:
-  construir_y_probar:  # Nombre del job principal
-    runs-on: ubuntu-latest  # Se ejecuta en una máquina virtual con Ubuntu
-
-    services:
-      base_de_datos:  # Servicio de PostgreSQL
-        image: postgres:latest
-        env:
-          POSTGRES_USER: usuario
-          POSTGRES_PASSWORD: contraseña
-          POSTGRES_DB: tienda_db
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready -U usuario" --health-timeout=30s --health-start-period=5s
+  build:
+    name: Construir y probar contenedores
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Obtener el código del repositorio
-      uses: actions/checkout@v2
+      - name: 🔹 Clonar el repositorio
+        uses: actions/checkout@v4
 
-    - name: Configurar Docker Buildx (para construir imágenes)
-      uses: docker/setup-buildx-action@v1
+      - name: 🛑 Configurar caché para dependencias
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            vendor/bundle
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/requirements.txt', '**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
 
-    - name: Guardar caché de Docker para acelerar el proceso
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-build-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-build-
+      - name: 🛠️ Construir los contenedores con Docker Compose
+        run: |
+          docker-compose up --build -d
 
-    - name: Construir y levantar los contenedores con Docker Compose
-      run: |
-        docker-compose -f docker-compose.yml up --build -d
+      - name: 🔄 Verificar que los contenedores están corriendo
+        run: |
+          docker ps -a
 
-    - name: Ejecutar pruebas
-      run: |
-        docker-compose exec ruby_app bundle exec rspec  # Pruebas en Rails
-        docker-compose exec python_app pytest           # Pruebas en Flask
+      - name: ✅ Ejecutar pruebas
+        run: |
+          docker-compose exec -T rails_app bundle exec rspec
+          docker-compose exec -T flask_app pytest
 
-    - name: Apagar los contenedores después de las pruebas
-      run: |
-        docker-compose down
+      - name: 🚀 Desplegar (si es necesario)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Aquí puedes agregar comandos de despliegue."
+
+  lint:
+    name: Revisar el código (Lint)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔹 Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: 🔍 Revisar estilo de código en Ruby
+        run: |
+          docker-compose exec -T rails_app rubocop
+
+      - name: 🔍 Revisar estilo de código en Python
+        run: |
+          docker-compose exec -T flask_app flake8
