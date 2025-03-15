@@ -1,25 +1,40 @@
-name: CI/CD
+name: 🚀 Automatización de Contenedores con Docker
 
 on:
   push:
     branches:
-      - main
+      - main  # Se ejecuta cuando hay cambios en la rama 'main'
+  pull_request:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  despliegue:
+    runs-on: ubuntu-latest  # Ejecuta en una máquina con Ubuntu
 
     steps:
-      - name: 🛠️ Clonar el repositorio
-        uses: actions/checkout@v4
+      - name: 📥 Clonar el repositorio
+        uses: actions/checkout@v3
 
-      - name: 🛠️ Instalar Docker Compose
+      - name: 🐳 Instalar Docker y Docker Compose
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      - name: 🚀 Construir y levantar los contenedores
-        run: docker-compose up --build -d
+      - name: 📦 Iniciar los contenedores con Docker Compose
+        run: |
+          docker-compose up -d
+          sleep 10  # Espera unos segundos para que los servicios arranquen
 
-      - name: 🔍 Ejecutar Rubocop
-        run: docker-compose exec -T rails_app rubocop
+      - name: 🔎 Verificar que los contenedores están en ejecución
+        run: docker ps -a
+
+      - name: 📜 Aplicar migraciones en la base de datos de Rails
+        run: docker exec rails_app rails db:migrate
+
+      - name: ✅ Ejecutar pruebas en la aplicación Rails
+        run: docker exec rails_app rspec
+
+      - name: ✅ Ejecutar pruebas en la aplicación Flask
+        run: docker exec flask_app pytest
+
+      - name: 🛑 Detener y limpiar los contenedores
+        run: docker-compose down
