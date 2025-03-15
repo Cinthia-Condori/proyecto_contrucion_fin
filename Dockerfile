@@ -1,23 +1,33 @@
-# Usa una imagen oficial de Ruby como base
-FROM ruby:3.2.2
+# Dockerfile para Ruby (rails_app)
+FROM ruby:3.2.2-slim
 
-# Establece el directorio de trabajo en /app
+# Instalar dependencias del sistema necesarias para Ruby y gemas nativas
+RUN apt-get update -qq && apt-get install -y \
+  build-essential \
+  libpq-dev \
+  libxml2-dev \
+  libxslt1-dev \
+  libffi-dev \
+  zlib1g-dev \
+  git \
+  make \
+  gcc \
+  && rm -rf /var/lib/apt/lists/*
+
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos Gemfile y Gemfile.lock (esto permite que Docker use la caché de dependencias)
+# Copiar el Gemfile y Gemfile.lock
 COPY Gemfile Gemfile.lock ./
 
-# Instalar dependencias del sistema necesarias para Rails
-RUN apt-get update -qq && apt-get install -y \
-    nodejs \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*  # Limpiar cache de apt para reducir tamaño de la imagen
-
-# Instalar Bundler y las gemas necesarias para la aplicación
+# Instalar bundler y las gemas de Rails
 RUN gem install bundler && bundle install --jobs 4 --retry 5
 
-# Copiar el resto de los archivos de la aplicación
+# Copiar el resto de la aplicación
 COPY . ./
 
-# Comando por defecto para ejecutar el servidor de Rails
-CMD ["rails", "server", "-b", "0.0.0.0"]
+# Exponer el puerto 3000 para la app de Rails
+EXPOSE 3000
+
+# Comando para ejecutar la aplicación Rails
+CMD ["bin/rails", "server", "-b", "0.0.0.0"]

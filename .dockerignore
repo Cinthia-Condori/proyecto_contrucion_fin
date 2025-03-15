@@ -1,0 +1,9 @@
+.git
+node_modules
+log/*
+tmp/*
+rails_log/*
+rails_data/*
+rails_tmp/*
+*.log
+*.gitignore

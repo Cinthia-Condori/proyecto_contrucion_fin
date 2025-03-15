@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:latest
@@ -5,32 +7,33 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: shopdb
+      POSTGRES_DB: mydb
     volumes:
-      - ./postgresql_data:/var/lib/postgresql/data  # Volumen dentro del proyecto
+      - ./postgresql_data:/var/lib/postgresql/data
     networks:
       - app_network
     ports:
       - "5432:5432"
 
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:latest
     container_name: rabbitmq_server_dos
-    ports:
-      - "5672:5672"    # RabbitMQ Message Broker
-      - "15672:15672"  # RabbitMQ Management UI
     networks:
       - app_network
-
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    
   ruby_app:
-    build: ./rails_app  # Usará el Dockerfile dentro de rails_app
+    build: .
     container_name: rails_app
     volumes:
-      - ./rails_app:/app  # Código de Rails
-      - ./rails_data:/app/data # Volumen persistente dentro del proyecto
-      - ./rails_log:/app/log # Volumen persistente para logs
-      - ./rails_tmp:/app/tmp # Volumen persistente para archivos temporales
+      - ./rails_app:/app
+      - ./rails_data:/app/data
+    environment:
+      - RAILS_ENV=development
     working_dir: /app
+    command: bash -c "bundle install && bin/rails db:create db:migrate && bin/rails s -b '0.0.0.0'"
     networks:
       - app_network
     depends_on:
@@ -38,14 +41,15 @@ services:
       - rabbitmq
     ports:
       - "3000:3000"
-    command: bash -c "bundle install && bundle exec rake db:create db:migrate && bundle exec rails s -b '0.0.0.0'"
 
   python_app:
-    build: ./flask_app  # Usará el Dockerfile dentro de flask_app
+    build: ./flask_app
     container_name: flask_app
     volumes:
-      - ./flask_app:/app  # Código de Flask
-      - ./flask_data:/app/data # Volumen persistente dentro del proyecto
+      - ./flask_app:/app  # Asegúrate de que tu código esté en esta carpeta
+      - ./flask_data:/app/data
+    environment:
+      - FLASK_APP=app.py  # Especificamos explícitamente que el archivo de la app es app.py
     working_dir: /app
     command: bash -c "pip install -r requirements.txt && flask run --host=0.0.0.0"
     networks:
