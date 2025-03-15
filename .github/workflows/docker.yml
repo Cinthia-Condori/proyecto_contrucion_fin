@@ -1,0 +1,52 @@
+name: CI/CD para aplicación Dockerizada  # Nombre del flujo de trabajo
+
+on:
+  push:
+    branches:
+      - main  # Se ejecuta cuando hay cambios en la rama 'main'
+  pull_request:
+    branches:
+      - main  # También en los pull requests hacia 'main'
+
+jobs:
+  construir_y_probar:  # Nombre del job principal
+    runs-on: ubuntu-latest  # Se ejecuta en una máquina virtual con Ubuntu
+
+    services:
+      base_de_datos:  # Servicio de PostgreSQL
+        image: postgres:latest
+        env:
+          POSTGRES_USER: usuario
+          POSTGRES_PASSWORD: contraseña
+          POSTGRES_DB: tienda_db
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready -U usuario" --health-timeout=30s --health-start-period=5s
+
+    steps:
+    - name: Obtener el código del repositorio
+      uses: actions/checkout@v2
+
+    - name: Configurar Docker Buildx (para construir imágenes)
+      uses: docker/setup-buildx-action@v1
+
+    - name: Guardar caché de Docker para acelerar el proceso
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-build-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-build-
+
+    - name: Construir y levantar los contenedores con Docker Compose
+      run: |
+        docker-compose -f docker-compose.yml up --build -d
+
+    - name: Ejecutar pruebas
+      run: |
+        docker-compose exec ruby_app bundle exec rspec  # Pruebas en Rails
+        docker-compose exec python_app pytest           # Pruebas en Flask
+
+    - name: Apagar los contenedores después de las pruebas
+      run: |
+        docker-compose down
