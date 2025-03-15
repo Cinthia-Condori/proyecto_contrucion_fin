@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: shopdb
+    volumes:
+      - ./postgresql_data:/var/lib/postgresql/data  # Volumen dentro del proyecto
+    networks:
+      - app_network
+    ports:
+      - "5432:5432"
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq_server_dos
+    ports:
+      - "5672:5672"    # RabbitMQ Message Broker
+      - "15672:15672"  # RabbitMQ Management UI
+    networks:
+      - app_network
+
+  ruby_app:
+    build: ./rails_app  # Usará el Dockerfile dentro de rails_app
+    container_name: rails_app
+    volumes:
+      - ./rails_app:/app  # Código de Rails
+      - ./rails_data:/app/data # Volumen persistente dentro del proyecto
+    working_dir: /app
+    command: bash -c "bundle install && rails db:migrate && rails s -b 0.0.0.0"
+    networks:
+      - app_network
+    depends_on:
+      - postgres
+      - rabbitmq
+    ports:
+      - "3000:3000"
+
+  python_app:
+    build: ./flask_app  # Usará el Dockerfile dentro de flask_app
+    container_name: flask_app
+    volumes:
+      - ./flask_app:/app  # Código de Flask
+      - ./flask_data:/app/data # Volumen persistente dentro del proyecto
+    working_dir: /app
+    command: bash -c "pip install -r requirements.txt && flask run --host=0.0.0.0"
+    networks:
+      - app_network
+    depends_on:
+      - postgres
+      - rabbitmq
+    ports:
+      - "5000:5000"
+
+networks:
+  app_network:
+    driver: bridge
