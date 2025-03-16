@@ -1,0 +1,113 @@
+<style>
+  /* Contenedor Principal */
+  .form-container {
+    max-width: 450px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  /* Título */
+  .form-container h2 {
+    color: #17a2b8;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  /* Checkbox Seleccionar Todas */
+  .select-all-container {
+    text-align: left;
+    margin-bottom: 10px;
+  }
+
+  .select-all-container input {
+    margin-right: 5px;
+  }
+
+  /* Estilo del Label */
+  label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+
+  /* Selector de Categoría Múltiple */
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  select:focus {
+    border-color: #17a2b8;
+    background: #fff;
+  }
+
+  /* Botón de Enviar */
+  .submit-btn {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+  }
+
+  .submit-btn:hover {
+    background: #0056b3;
+  }
+</style>
+
+<div class="form-container">
+  <h2>🛒 Ventas Online - Seleccionar Categoría(s)</h2>
+
+  <!-- Checkbox para seleccionar todas las categorías -->
+  <div class="select-all-container">
+    <label>
+      <input type="checkbox" id="seleccionar_todas"> Seleccionar todas
+    </label>
+  </div>
+
+  <!-- Formulario para enviar múltiples categorías -->
+  <%= form_with url: send_to_queue_ventas_online_path, method: :post, local: true do |form| %>
+    <label for="categorias">Selecciona una o varias categorías:</label>
+    <%= select_tag 'categorias[]', 
+          options_for_select(@categories.map { |c| [c, c] }), 
+          multiple: true, 
+          prompt: "Seleccione las categorías", 
+          id: "categorias_select", 
+          size: @categories.size 
+    %>
+
+    <%= submit_tag "🚀 Enviar categorías seleccionadas", class: "submit-btn", name: "commit", value: "Enviar múltiples" %>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const selectTag = document.getElementById("categorias_select");
+    const checkbox = document.getElementById("seleccionar_todas");
+
+    checkbox.addEventListener("change", function() {
+      for (let option of selectTag.options) {
+        option.selected = checkbox.checked;
+      }
+    });
+  });
+</script>

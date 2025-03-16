@@ -1,0 +1,47 @@
+<%= turbo_frame_tag 'home' do%>
+  <%= form_with url: productos_path, method: :get, class:" w-[50%] flex flex-column mx-auto " do |form|%>
+    <%= form.text_field :query_text, placeholder: 'Buscar producto',
+    onChange: 'this.form.requestSubmit()',value: params[:query_text],
+    class:" px-4 py-3 mt-4 rounded-2xl "
+    %>
+
+    <div class="flex items-center p-2 ">
+      <%= form.number_field :min_price, placeholder: 'MinPrice',
+      onChange: 'this.form.requestSubmit()',value: params[:min_price],
+      class:" flex-[1_1_50%] rounded-xl border-gray-200 py-2 px-3  my-4"
+      %>
+
+      <%= form.number_field :max_price, placeholder: 'MaxPrice',
+      onChange: 'this.form.requestSubmit()',value: params[:max_price],
+      class:" flex-[1_1_50%] rounded-xl border-gray-200 py-2 px-3 my-4 mx-2"
+      %>
+
+      <%= form.select :order_by, options_for_select([["Recientes","newest"],
+      ["Más Caros","expensive"],["Más Baratos","cheapest"]],params[:order_by]),{},
+      {onChange: 'this.form.requestSubmit()',
+      class:" flex-[1_1_50%] rounded-xl border-gray-200 py-2 px-3 my-4"}%>
+    </div>
+  <% end %>
+
+<!-- eliminar el margen superior (my-4) y reemplazarlo por mt-0 (margen superior cero).   -->
+  <div class="flex flex-wrap justify-center gap-2 py-4 px-4 mt-0 mb-4 w-[90%] m-auto">
+    <%= link_to 'All', productos_path, class:' flex items-center justify-center border-1 border-gray-500  text-gray-600 rounded-xl drop-shadow-sm hover:bg-gray-300 py-2 px-4 ' %>
+    <%= render partial: 'category', collection: @categories%>
+  </div>
+
+  <%= turbo_frame_tag 'productos', class:" flex flex-col m-2 " do %>
+    <!-- llamamos products a nuestro frama y le pasamos que pagina es la actual-->
+    <%= turbo_frame_tag "productos-#{@pagy.page}", class: ' bg-gray-200 p-2 productos flex flex-col w-[90%] m-auto sm:flex-row sm:flex-wrap sm:gap-x-2' do%>
+      <%=render partial: 'producto', collection: @productos %>
+      <!-- hacemos un turbo frame anidado para la pagination que tendrá d nombre productos
+      y el numero de pagina siguiente-->
+      <%= turbo_frame_tag "productos-#{@pagy.next}", class: 'productos flex flex-col w-full sm:flex-row sm:flex-wrap sm:gap-x-2', src: pagy_url_for(@pagy, @pagy.next), loading: :lazy if @pagy.next%>
+    <% end %>
+  <% end %>
+
+<% end %>
+
+
+  
+  
+

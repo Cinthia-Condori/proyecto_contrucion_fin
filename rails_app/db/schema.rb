@@ -10,8 +10,116 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 0) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_24_074048) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_catalog.plpgsql"
+  enable_extension "plpgsql"
 
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "cargos", force: :cascade do |t|
+    t.string "uid", limit: 50
+    t.integer "estado", default: 0
+    t.integer "metodo_pago", default: 0
+    t.decimal "monto", default: "0.0"
+    t.text "mensaje_error"
+    t.jsonb "datos_respuesta"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "carritos", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "producto_id", null: false
+    t.integer "cantidad"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id"], name: "index_carritos_on_producto_id"
+    t.index ["user_id", "producto_id"], name: "index_carritos_on_user_id_and_producto_id", unique: true
+    t.index ["user_id"], name: "index_carritos_on_user_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "producto_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id"], name: "index_favorites_on_producto_id"
+    t.index ["user_id", "producto_id"], name: "index_favorites_on_user_id_and_producto_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
+  create_table "productos", force: :cascade do |t|
+    t.string "titulo"
+    t.text "description"
+    t.float "price"
+    t.string "color"
+    t.integer "stock"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil
+    t.bigint "category_id", null: false
+    t.bigint "talla_id", null: false
+    t.string "photo_path"
+    t.string "imagen_url"
+    t.string "url"
+    t.index ["category_id"], name: "index_productos_on_category_id"
+    t.index ["talla_id"], name: "index_productos_on_talla_id"
+  end
+
+  create_table "tallas", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "username", null: false
+    t.string "password_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "admin"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "carritos", "productos"
+  add_foreign_key "carritos", "users"
+  add_foreign_key "favorites", "productos"
+  add_foreign_key "favorites", "users"
+  add_foreign_key "productos", "categories"
+  add_foreign_key "productos", "tallas"
 end

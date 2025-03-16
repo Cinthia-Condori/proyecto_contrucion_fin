@@ -1,0 +1,26 @@
+<h1>Productos en la Categoría: <%= @category.name %></h1>
+
+<% if @products.any? %>
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @products.each do |product| %>
+        <tr>
+            <td><%= product.titulo %></td>
+            <td>$<%= product.price %></td>
+            <td><%= product.stock %></td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+
+<%= button_to "Enviar Productos al Consumidor", send_to_queue_path(@category), method: :post %>
+<% else %>
+<p>No hay productos en esta categoría.</p>
+<% end %>

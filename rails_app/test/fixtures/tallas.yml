@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+None:
+  name: NN
+Small:
+  name: S
+
+Gordo:
+  name: G
+
+Mediano:
+  name: M
+
+extra_grande:
+  name: XL
+
+extra_extra_grande:
+  name: XXL
+
+

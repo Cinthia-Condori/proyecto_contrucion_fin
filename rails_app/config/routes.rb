@@ -1,14 +1,53 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :productos
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+    #para que podamos estruccturar el codigo como si fuerean carpetas
+  namespace :authentication, path: '', as:'' do
+    resources :users, only: [:new, :create],path: '/register', path_names: {new: '/'}
+    resources :sessions, only: [:new, :create, :destroy],path: '/login', path_names: {new: '/'}
+  end
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  resources :carritos, only: [:index, :create, :destroy], param: :producto_id
+  resources :favorites, only: [:index, :create, :destroy], param: :producto_id
+  resources :users, only: :show, path: '/user', param: :username
+  resources :cargos, only: [:index, :new, :create]
+  #resources :tallas, except: :show
+  resources :tallas, only: [:index, :new, :create, :edit, :update, :destroy]
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  resources :categories, except: :show
+  # Ruta raíz
+  root to: 'productos#index'
+  resources :productos, only: [:index, :show, :new, :create] # Agrega `:new` y `:create`
+  resources :productitos, only: [] do
+    collection do
+      get 'index1'
+      
+      post 'send_to_queue'
+      Rails.logger.debug "Categorías obtenidas: #{@categories.inspect}" # 👈 Agrega esta línea
+      end
+    end
+
+  # Rutas para VentasOnlineController
+  get 'ventas_online', to: 'ventas_online#index'
+  post 'send_to_queue_ventas_online', to: 'ventas_online#send_to_queue'
+  
+
+  
+    resources :productos, except: [:destroy]
+
+    resources :productitos do
+      collection do
+        get 'mensajes', to: 'productitos#mensajes'
+        # get 'productitos/mensajes', to: 'productitos#mensajes'
+
+      end
+    end
+    
+    # get 'productitos/mensajes', to: 'productitos#mensajes', as: 'mensajes'
+    get 'productitos/mensajes', to: 'productitos#mensajes', as: 'productitos_mensajes'
+
+
+  
+
+
 end

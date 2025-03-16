@@ -1,0 +1,21 @@
+configuramos el archivo Dockerfile en la raíz del proyecto
+creamos el archivo doccker-compose.yml en la raíz del proyecto
+
+configuramos el config\database.yml para que apunte al servicio de PostgreSQL en Docker
+
+**comandos para levantar luego de clonar**
+
+docker compose build
+
+docker-compose up
+-luego detienes la ejecucion con ctrl+c y continuas con los demas comandos
+
+docker-compose run web bin/rails db:create
+
+docker-compose run web bin/rails db:migrate
+
+docker-compose run web bin/rails db:fixtures:load
+
+docker-compose up
+
+

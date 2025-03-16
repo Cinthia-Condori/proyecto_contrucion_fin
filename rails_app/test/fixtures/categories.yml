@@ -1,0 +1,61 @@
+Clothes:
+  name: Ropa
+Pantalones:
+  name: Pantalones
+
+Bufanda:
+  name: Bufanda
+
+Camiseta:
+  name: Camiseta
+
+Chaqueta:
+  name: Chaqueta
+
+Vestido:
+  name: Vestido
+
+Falda:
+  name: Falda
+
+Sudadera:
+  name: Sudadera
+
+Traje:
+  name: Traje de baño
+
+Chaleco:
+  name: Chaleco
+
+Sombrero:
+  name: Sombrero
+
+Zapatos:
+  name: Zapatos
+
+Gorra:
+  name: Gorra
+
+Calcetines:
+  name: Calcetines
+
+Abrigo:
+  name: Abrigo
+
+Chándal:
+  name: Chándal
+
+Suéter:
+  name: Suéter
+
+Botas:
+  name: Botas
+
+Corbata:
+  name: Corbata
+
+Leggings:
+  name: Leggings
+
+Mallas:
+  name: Mallas

@@ -1,0 +1,94 @@
+bundle check
+era para ver sus depencias actulzarlo 
+
+
+
+con este comando se borra los chaches 
+ails tmp:cache:clear 
+
+
+rails console
+
+
+http://localhost:3000/productitos/index1
+
+
+
+rails routes | Select-String "select_products"
+
+
+
+=---  Ejecuta este comando para verificar las rutas:
+rails routes | Select-String "list"
+
+---------
+Si deseas que cada producto pertenezca a una categoría, necesitas agregar una clave foránea category_id. Para hacerlo, ejecuta:
+
+
+rails generate migration AddCategoryIdToProductos category_id:integer
+rails db:migrate
+
+------------
+PS C:\ruby aqui\6 gitclone\tienda - copia> rails routes | findstr productos
+>>
+                                    root GET    /
+                                     productos#index
+PS C:\ruby aqui\6 gitclone\tienda - copia> 
+
+
+
+
+PS C:\ruby aqui\6 gitclone\tienda - copia> rails routes | findstr productos
+>>
+                                    root GET    /
+                                     productos#index
+                               productos GET    /productos(.:format)
+                                     productos#index
+                                         POST   /productos(.:format)
+                                     productos#create
+                            new_producto GET    /productos/new(.:format)
+                                     productos#new
+                                producto GET    /productos/:id(.:format)
+                                     productos#show
+PS C:\ruby aqui\6 gitclone\tienda - copia>
+-----------------------
+PS C:\ruby aqui\6 gitclone\tienda - copia> rails routes | findstr productitos
+>> 
+                      index1_productitos GET    /productitos/index1(.:format)
+                                     productitos#index1
+               send_to_queue_productitos POST   /productitos/send_to_queue(.:format)
+                                     productitos#send_to_queue
+PS C:\ruby aqui\6 gitclone\tienda - copia>
+
+
+
+
+-----------------
+                                          ruby app/services/rabbitmq_subscriber.rb
+>> C:\ruby aqui\6 gitclone\tienda - copia>
+ [*] Esperando mensajes. Para salir, presiona CTRL+C
+ [✔] Recibido: Categoría - Sombrero, Productos - cono, hhhhhhh
+ [✔] Recibido: Categoría - Sombrero, Productos - cono, hhhhhhh
+ [✔] Recibido: Categoría - Sombrero, Productos - cono, hhhhhhh
+ [✔] Recibido: Categoría - Sombrero, Productos - cono, hhhhhhh
+ [✔] Recibido: Categoría - Sombrero, Productos - cono, hhhhhhh
+
+------------------------
+Si después de estos pasos aún no funciona, revisa si hay errores en los logs de RabbitMQ:
+
+
+rabbitmqctl list_queues name messages_ready messages_unacknowledged
+
+--------------------
+rabbitmqctl status
+
+------------
+2️⃣ Verifica si la cola existe y tiene mensajes pendientes
+Ejecuta:
+
+
+rabbitmqctl list_queues
+
+
+
+-------------

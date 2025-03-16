@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center text-2xl font-bold text-teal-500">
+      <h1>Editar talla</h1>
+    </div>
+  </div>
+</div>
+<%= render "form", talla: @talla %>
+
+<br>
+
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <%= link_to tallas_path, class: "btn d-flex align-items-center custom-btn", style: "text-align: left; border: 2px solid #17E010;" do %>
+        <%= image_tag 'icons/atras.svg', width: 35, height: 35 %>
+        <p class="ml-2" style="font-weight: bold;">Back to tallas</p>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<h1>📦 Productos Recibidos desde RabbitMQ</h1>
+
+<% if @mensajes.empty? %>
+  <div class="alert alert-warning">
+    <p>No hay productos en la cola.</p>
+  </div>
+<% else %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>🏷️ Título</th>
+        <th>📖 Descripción</th>
+        <th>💰 Precio</th>
+        <th>📦 Stock</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @mensajes.each do |producto| %>
+        <tr>
+          <td><%= producto[:id] %></td>
+          <td><%= producto[:titulo] %></td>
+          <td><%= producto[:description] %></td>
+          <td>$<%= producto[:price] %></td>
+          <td><%= producto[:stock] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<!-- Botón para recargar los mensajes sin recargar la página -->
+<button id="recargar-btn" class="btn btn-primary">🔄 Recargar Mensajes</button>
+
+<script>
+  document.getElementById('recargar-btn').addEventListener('click', function() {
+    location.reload(); // Recarga la página para obtener nuevos mensajes
+  });
+</script>

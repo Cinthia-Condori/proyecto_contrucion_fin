@@ -1,0 +1,107 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <%= form_with(model: @producto, local: true, html: { multipart: true }) do |form| %>
+        <% if @producto.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@producto.errors.count, "error") %> prohibited this producto from being saved:</h2>
+
+            <ul>
+              <% @producto.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="card">
+          <div class="card-body">
+            
+            <div class="field">
+              <%= form.label :titulo %>
+              <%= form.text_field :titulo, class: "form-control" %>
+              <% if @producto.errors[:titulo].any? %>
+                <div class="error-message"><%= @producto.errors[:titulo].first %></div>
+              <% end %>
+            </div>
+
+            <div class="field">
+              <%= form.label :description %>
+              <%= form.text_area :description, class: "form-control" %>
+              <% if @producto.errors[:description].any? %>
+                <div class="error-message"><%= @producto.errors[:description].first %></div>
+              <% end %>
+            </div>
+
+            <div class="field">
+              <%= form.label :price %>
+              <%= form.number_field :price, class: "form-control" %>
+            </div>
+
+            <div class="field">
+              <%= form.label :color %>
+              <%= form.text_field :color, class: "form-control" %>
+              <% if @producto.errors[:color].any? %>
+                <div class="error-message"><%= @producto.errors[:color].first %></div>
+              <% end %>
+            </div>
+
+            <div class="field">
+              <%= form.label :stock %>
+              <%= form.number_field :stock, class: "form-control" %>
+              <% if @producto.errors[:stock].any? %>
+                <div class="error-message"><%= @producto.errors[:stock].first %></div>
+              <% end %>
+            </div>
+
+            <div class="field">
+              <%= form.label :category_id, "Categoría" %>
+              <%= form.collection_select :category_id, Category.all.order(name: :asc), :id, :name, { prompt: "Seleccione una categoría" }, class: "form-control" %>
+            </div>
+
+            <div class="field">
+              <%= form.label :talla_id, "Talla" %>
+              <%= form.collection_select :talla_id, Talla.all.order(name: :asc), :id, :name, { prompt: "Seleccione una talla" }, class: "form-control" %>
+            </div>
+
+            <div class="field">
+              <%= form.label :imagen_url %>
+              <%= form.text_field :imagen_url, class: "form-control" %>
+            </div>
+
+            <div class="field">
+              <%= form.label :photo, "Seleccionar imagen" %>
+              <label for="photo-upload" class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700">
+                Elegir archivo
+              </label>
+              <%= form.file_field :photo, id: "photo-upload", class: "hidden" %>
+
+              <% if @producto.photo.attached? %>
+                <div class="mt-2">
+                  <%= link_to url_for(@producto.photo) do %>
+                    <%= image_tag @producto.photo, width: 200 %>
+                  <% end %>
+                </div>
+                <p>
+                  Archivo actual: 
+                  <%= link_to @producto.photo.filename.to_s, url_for(@producto.photo), target: "_blank", class: "text-blue-600 hover:underline font-bold" %>
+                </p>
+              <% else %>
+                <!-- Mostrar mensaje solo si NO hay imagen -->
+                <div class="mt-2">
+                  <span class="bg-gray-300 text-gray-700 px-3 py-1 rounded-lg text-sm cursor-pointer">
+                    Ninguna imagen seleccionada
+                  </span>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="mt-3 text-center">
+              <%= form.submit "Guardar", class: "btn btn-primary" %>
+            </div>
+
+          </div> <!-- Cierre de .card-body -->
+        </div> <!-- Cierre de .card -->
+      <% end %> <!-- Cierre de form_with -->
+    </div> <!-- Cierre de .col-md-6 -->
+  </div> <!-- Cierre de .row -->
+</div> <!-- Cierre de .container -->

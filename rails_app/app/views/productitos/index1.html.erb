@@ -1,0 +1,76 @@
+<style>
+  /* Contenedor Principal */
+  .form-container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  /* Título */
+  .form-container h2 {
+    color: #17a2b8;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  /* Estilo del Label */
+  label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+
+  /* Selector de Categoría */
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  select:focus {
+    border-color: #17a2b8;
+    background: #fff;
+  }
+
+  /* Botón de Enviar */
+  .submit-btn {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+  }
+
+  .submit-btn:hover {
+    background: #0056b3;
+  }
+</style>
+
+<div class="form-container">
+  <h2>📌 Seleccionar Categoría</h2>
+
+  <%= form_with url: send_to_queue_productitos_path, method: :post, local: true do |form| %>
+    <label for="categoria">Elige una categoría:</label>
+    <%= select_tag :categoria, options_for_select(@categories.presence || [["Sin categorías", ""]]), prompt: "Seleccione una categoría" %>
+
+    <%= submit_tag "🚀 Enviar a RabbitMQ", class: "submit-btn" %>
+  <% end %>
+</div>

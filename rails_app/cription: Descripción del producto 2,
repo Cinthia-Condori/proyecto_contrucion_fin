@@ -1,0 +1,15 @@
+=> 
+[32m#<Producto:0x00007f1ca7863768[0m
+ id: [36m[1mnil[0m,
+ titulo: [31m[1m"[0m[31mProducto 1[0m[31m[1m"[0m,
+ description: [31m[1m"[0m[31mDescripción del producto 1[0m[31m[1m"[0m,
+ price: [35m[1m100.0[0m,
+ color: [31m[1m"[0m[31mRojo[0m[31m[1m"[0m,
+ stock: [34m[1m10[0m,
+ created_at: [36m[1mnil[0m,
+ updated_at: [36m[1mnil[0m,
+ category_id: [34m[1m1[0m,
+ talla_id: [34m[1m1[0m,
+ photo_path: [36m[1mnil[0m,
+ imagen_url: [31m[1m"[0m[31mhttp://example.com/imagen.jpg[0m[31m[1m"[0m,
+ url: [36m[1mnil[0m[32m>[0m

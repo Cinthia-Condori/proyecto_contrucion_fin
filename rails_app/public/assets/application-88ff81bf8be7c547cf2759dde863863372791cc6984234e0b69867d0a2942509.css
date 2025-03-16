@@ -1,0 +1,363 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/*
+
+@layer components {
+  .btn-primary {
+    @apply py-2 px-4 bg-blue-200;
+  }
+}
+
+*/
+#main-container {
+    height: 150px;
+    width: 400px;
+    padding-left: 10px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    flex-direction: column;
+  }
+  
+
+  #main-container h1{
+    font-family: Tahoma;
+    font-size: 35px;
+    letter-spacing: 3px;
+    word-spacing: 4px;
+    color: #c061cb;
+    font-weight: normal;
+    text-decoration: underline;
+    font-style: oblique;
+    font-variant: small-caps;
+    text-transform: none;
+    }
+  
+
+  
+  #main-container link_to {
+    font-family: Times New Roman;
+    font-size: 20px;
+    color: #1a5fb4;
+    font-weight: normal;
+    text-decoration: overline;
+    font-style: oblique;
+    font-variant: small-caps;
+    text-transform: none;
+  }
+  
+
+/* Estilos para el contenedor */
+.producto-wrapper {
+    background-color: gray;
+    padding: 10px;
+    margin-bottom: 15px; /* Espacio entre filas */
+    height: 450px;
+    width: 350px;
+    border-radius: 15px;
+    margin-right: 15px;
+  }
+  .producto-wrapper:nth-child(3n) {
+    margin-right: 0; /* Esto elimina el margen derecho para el tercer producto en cada fila */
+  }
+  .link-unstyled {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  
+  .producto-photo {
+    margin-left: 60px;
+    width: 200px;
+    height: 250px;
+    background-color: gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /* Estilos para la imagen */
+  .producto-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Para que la imagen cubra todo el contenedor sin deformarse */
+  }
+
+  .producto-description{
+    font-size: 20px;
+    color: #555;
+    font-family: Arial;
+    font-style: italic;
+    font-weight: lighter;
+  }
+  /* Estilos para el título */
+  .producto-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+  }
+  
+  /* Estilos para el precio */
+  .producto-price {
+    font-size: 18px;
+    color: red;
+    font-weight: bold;
+  }
+  
+.Container {
+    margin: 0;
+    padding: 0;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+    background: linear-gradient(to bottom right, #8A2BE2, #4169E1);
+    /* Degradado de morado a azul */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+}
+
+
+.Formulario-Transparente {
+    position: absolute;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 20;
+}
+
+.Formulario-Transparente h2 {
+    text-align: left;
+    font-family: Arial, sans-serif;
+    font-size: 30px;
+    /* Tamaño de letra */
+    font-weight: bold;
+    padding: 0 0 20px 0;
+    color: white;
+}
+
+.Formulario-Transparente form {
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
+form .usuario {
+    position: relative;
+    border-bottom: 2px solid #adadad;
+    margin: 30px 0;
+}
+
+.usuario input {
+    color: white;
+    width: 100%;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.usuario label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    color: #adadad;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.usuario span::before {
+    content: "";
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #8c8c8c;
+    transition: 0.5s;
+}
+
+.usuario input:focus~label,
+.usuario input:valid~label {
+    top: -5px;
+    color: #8c8c8c;
+}
+
+.usuario input:focus~span::before,
+.usuario input:valid~span::before {
+    width: 100%;
+}
+
+form .recuerdame {
+    color: white;
+}
+
+.ingresar {
+    width: 100%;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: #c7000b;
+    /* Color de fondo sólido */
+    color: white;
+    transition: background-color 0.1s;
+}
+
+.ingresar:hover {
+    background-color: #e50914;
+    /* Cambiar el color de fondo al pasar el cursor sobre el botón */
+}
+
+
+.btn-Google {
+    width: 100%;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: #1c1890;
+    color: white;
+    transition: background-color 0.1s;
+}
+
+.btn-Google:hover {
+    background-color: #0001fd;
+    /* Cambiar el color de fondo al pasar el cursor sobre el botón */
+}
+
+.Registrar {
+    margin: 30px 0;
+    text-align: left;
+    font-size: 16px;
+    color: white;
+}
+
+.Registrar a {
+    text-decoration: none;
+}
+
+.Registrar a:hover {
+    text-decoration: underline;
+}
+
+/*para crear el formulario de crear cuenta*/
+.Crear-Cuenta {
+    position: absolute;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 20;
+}
+
+.Crear-Cuenta h2 {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    /* Tamaño de letra */
+    font-weight: bold;
+    padding: 0 0 20px 0;
+    color: white;
+}
+
+.Crear-Cuenta form {
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
+.btn_Cerrar_Session {
+    width: 10%;
+    padding: 5 5px;
+    height: 5%;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    background-color: rgba(28, 24, 144, 0.5);
+    color: white;
+    transition: background-color 0.1s;
+
+    /*para que este posicionado al lado derecho */
+    position: absolute;
+    top: 2%;
+    left: 89%;
+}
+
+.btn_Cerrar_Session:hover {
+    background-color: #0001fd;
+}
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+
+
+ */
+
+
+.flash {
+    padding: 10px;
+    margin-bottom: 15px;
+    display: 'none';
+}
+
+.notice {
+    background-color: green;
+    color: white;
+}
+
+.alert {
+    background-color: red;
+    color: white;
+
+}
+
+.hidden {
+    display: none;
+}
+
+/* Estilo por defecto del botón */
+.btn-primary {
+    background-color: white;
+    /* Azul por defecto */
+    color: black;
+    /* Letras blancas por defecto */
+    border-color: #007bff;
+    /* Color del borde igual al color de fondo */
+}
+
+/* Estilo del botón al hacer hover */
+.btn-primary:hover {
+    background-color: #007bff;
+    /* Blanco al hacer hover */
+    color: black;
+    /* Letras negras al hacer hover */
+}
+
+custom-btn {
+    border: 2px solid #17E010;
+    /* Solo el borde exterior verde */
+    background-color: white;
+    /* Fondo blanco por defecto */
+}
+
+.custom-btn:hover {
+    background-color: #17E010;
+    /* Fondo verde al hacer hover */
+}
