@@ -11,7 +11,7 @@ services:
     networks:
       - app_network
     ports:
-      - "5432:5432"
+      - "5433:5432"  # Cambié el puerto de 5432 a 5433
 
   rabbitmq:
     image: rabbitmq:latest
@@ -19,8 +19,8 @@ services:
     networks:
       - app_network
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5673:5672"  # Cambié el puerto de 5672 a 5673
+      - "15673:15672" # Cambié el puerto de 15672 a 15673
   
   ruby_app:
     build: .
