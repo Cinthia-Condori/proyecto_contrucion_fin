@@ -31,7 +31,7 @@ Rails.application.routes.draw do
   get 'ventas_online', to: 'ventas_online#index'
   post 'send_to_queue_ventas_online', to: 'ventas_online#send_to_queue'
   
-
+  get '/productos/controllers/AccesoGoogle.js', to: 'productos#AccesoGoogle'
   
     resources :productos, except: [:destroy]
 
