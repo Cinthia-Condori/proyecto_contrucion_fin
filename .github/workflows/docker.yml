@@ -45,6 +45,11 @@ jobs:
       - name: Verificar contenedores en ejecución
         run: docker ps
 
+      - name: Esperar a PostgreSQL
+        run: |
+          chmod +x wait-for-it.sh
+          ./wait-for-it.sh postgres:5432 -- echo "PostgreSQL está listo"
+
       - name: Verificar conexión a PostgreSQL desde Rails
         run: |
           docker compose exec -T ruby_app bash -c 'bundle exec rails runner "puts ActiveRecord::Base.connection.active? ? \"Connected!\" : \"Not connected!\""' || exit 1
@@ -65,6 +70,12 @@ jobs:
       - name: Ver logs de Flask en caso de error
         if: failure()
         run: docker compose logs python_app
+
+      - name: Verificar logs de Rails
+        run: docker-compose logs rails_app
+
+      - name: Mostrar logs de todos los servicios
+        run: docker-compose logs
 
       - name: Apagar los contenedores
         if: always()
