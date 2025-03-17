@@ -46,10 +46,10 @@ jobs:
         run: docker ps
 
       - name: Ejecutar migraciones de Rails
-        run: docker compose exec -T ruby_app rails db:migrate
+        run: docker compose exec -T ruby_app bash -c "bundle exec rails db:migrate"
 
       - name: Ejecutar pruebas en Rails
-        run: docker compose exec -T ruby_app rails test
+        run: docker compose exec -T ruby_app bash -c "bundle exec rails test"
 
       - name: Ejecutar pruebas en Flask
         run: docker compose exec -T python_app pytest
