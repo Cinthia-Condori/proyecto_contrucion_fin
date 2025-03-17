@@ -22,7 +22,7 @@ services:
       - "5673:5672"  # Cambié el puerto de 5672 a 5673
       - "15673:15672" # Cambié el puerto de 15672 a 15673
   
-  ruby_app:
+  rails_app:
     build:
       context: ./rails_app
     container_name: rails_app
