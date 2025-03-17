@@ -21,7 +21,6 @@ jobs:
           POSTGRES_DB: shopdb
         ports:
           - 5432:5432
-        # Añadir dependencias o configuraciones adicionales si es necesario
       cola_de_mensajes:
         image: rabbitmq:management
         ports:
@@ -29,48 +28,50 @@ jobs:
           - 15672:15672
 
     steps:
-      # Paso 1: Descargar el código
       - name: Descargar código
         uses: actions/checkout@v3
 
-      # Paso 2: Configurar Docker y Docker Compose
-      - name: Configurar Docker y Docker Compose
+      - name: Verificar Docker y Docker Compose
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+          docker --version
+          docker compose version
 
-      # Paso 3: Construir y levantar los contenedores en segundo plano
       - name: Construir y levantar contenedores
         run: docker-compose up -d --build
 
-      # Paso 4: Verificar que los contenedores estén en ejecución
+      - name: Esperar a que los servicios se inicien
+        run: sleep 10
+
       - name: Verificar contenedores en ejecución
         run: docker ps
 
-      # Paso 5: Ejecutar migraciones de Rails (si es necesario)
       - name: Ejecutar migraciones de Rails
         run: docker-compose exec -T ruby_app rails db:migrate
 
-      # Paso 6: Ejecutar pruebas en Rails
       - name: Ejecutar pruebas en Rails
         run: docker-compose exec -T ruby_app rails test
 
-      # Paso 7: Ejecutar pruebas en Flask
       - name: Ejecutar pruebas en Flask
         run: docker-compose exec -T python_app pytest
 
-      # Paso 8: Apagar los contenedores (esto ocurre siempre, incluso si los pasos anteriores fallan)
+      - name: Ver logs de Rails en caso de error
+        if: failure()
+        run: docker-compose logs ruby_app
+
+      - name: Ver logs de Flask en caso de error
+        if: failure()
+        run: docker-compose logs python_app
+
       - name: Apagar los contenedores
         if: always()
         run: docker-compose down
 
-      # Paso 9: Caché de dependencias (opcional, pero puede acelerar el proceso si usas muchas dependencias)
       - name: Caché de dependencias
         uses: actions/cache@v3
         with:
           path: |
-            ~/.cache/pip  # Si estás usando pip en Flask
-            ~/.bundle  # Si estás usando Bundler en Rails
+            ~/.cache/pip
+            ~/.bundle
           key: ${{ runner.os }}-build-${{ hashFiles('**/Gemfile.lock', '**/package-lock.json', '**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-build-
