@@ -1,0 +1,3 @@
+postgresql_data/
+rails_app/tmp/
+rails_app/log/
