@@ -63,7 +63,7 @@ jobs:
 
       - name: Ver logs de Rails en caso de error
         if: failure()
-        run: docker compose logs ruby_app
+        run: docker compose logs rails_appj
 
       - name: Ver logs de Flask en caso de error
         if: failure()
