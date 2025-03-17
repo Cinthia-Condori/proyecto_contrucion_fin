@@ -37,7 +37,7 @@ jobs:
           docker compose version
 
       - name: Construir y levantar contenedores
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
 
       - name: Esperar a que los servicios se inicien
         run: sleep 10
@@ -46,25 +46,25 @@ jobs:
         run: docker ps
 
       - name: Ejecutar migraciones de Rails
-        run: docker-compose exec -T ruby_app rails db:migrate
+        run: docker compose exec -T ruby_app rails db:migrate
 
       - name: Ejecutar pruebas en Rails
-        run: docker-compose exec -T ruby_app rails test
+        run: docker compose exec -T ruby_app rails test
 
       - name: Ejecutar pruebas en Flask
-        run: docker-compose exec -T python_app pytest
+        run: docker compose exec -T python_app pytest
 
       - name: Ver logs de Rails en caso de error
         if: failure()
-        run: docker-compose logs ruby_app
+        run: docker compose logs ruby_app
 
       - name: Ver logs de Flask en caso de error
         if: failure()
-        run: docker-compose logs python_app
+        run: docker compose logs python_app
 
       - name: Apagar los contenedores
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
       - name: Caché de dependencias
         uses: actions/cache@v3
