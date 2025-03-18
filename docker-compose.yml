@@ -2,12 +2,13 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgres_db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     volumes:
-      - ./postgresql_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - app_network
     ports:
@@ -58,6 +59,9 @@ services:
       - rabbitmq
     ports:
       - "5000:5000"
+
+volumes:
+  postgres_data:
 
 networks:
   app_network:

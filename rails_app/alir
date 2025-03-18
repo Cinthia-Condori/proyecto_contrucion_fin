@@ -1,0 +1,4 @@
+ id | titulo | description | price | color | stock | created_at | updated_at | category_id | talla_id | photo_path | imagen_url | url | precio 
+----+--------+-------------+-------+-------+-------+------------+------------+-------------+----------+------------+------------+-----+--------
+(0 rows)
+
