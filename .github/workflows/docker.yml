@@ -50,9 +50,8 @@ jobs:
 
       - name: Verificar si rails_app está corriendo
         run: |
-          STATUS=$(docker inspect -f '{{.State.Status}}' rails_app || echo "notfound")
-          if [ "$STATUS" != "running" ]; then
-            echo "rails_app no está corriendo. Estado actual: $STATUS"
+          if [ "$(docker inspect -f '{{.State.Running}}' rails_app 2>/dev/null)" != "true" ]; then
+            echo "rails_app no está corriendo"
             docker ps  # Mostrar los contenedores en ejecución para depuración
             exit 1
           fi
