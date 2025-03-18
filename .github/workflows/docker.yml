@@ -43,14 +43,16 @@ jobs:
         run: sleep 10
 
       - name: Verificar contenedores en ejecución
-        run: docker compose ps
+        run: docker ps
+
+      - name: Eliminar archivo server.pid si existe
+        run: docker compose exec -T rails_app rm -f /app/tmp/pids/server.pid || true
 
       - name: Verificar si rails_app está corriendo
         run: |
-          docker compose ps rails_app
-          if [ "$(docker compose ps -q rails_app | xargs docker inspect -f '{{.State.Running}}')" != "true" ]; then
+          if [ "$(docker inspect -f '{{.State.Running}}' rails_app 2>/dev/null)" != "true" ]; then
             echo "rails_app no está corriendo"
-            docker compose ps  # Mostrar los contenedores en ejecución para depuración
+            docker ps  # Mostrar los contenedores en ejecución para depuración
             exit 1
           fi
 
