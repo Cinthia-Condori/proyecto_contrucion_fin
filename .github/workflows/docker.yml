@@ -40,10 +40,17 @@ jobs:
         run: docker compose up -d --build
 
       - name: Esperar a que los servicios se inicien
-        run: sleep 10
+        run: sleep 20  # Aumentado el tiempo de espera
 
       - name: Verificar contenedores en ejecución
         run: docker ps
+
+      - name: Verificar si rails_app está corriendo
+        run: |
+          if ! docker compose ps | grep -q "rails_app"; then
+            echo "rails_app no está corriendo"
+            exit 1
+          fi
 
       - name: Esperar a PostgreSQL
         run: ./wait-for-it.sh postgres:5432 -- echo "PostgreSQL está listo"
@@ -59,7 +66,7 @@ jobs:
         run: docker compose exec -T rails_app bash -c "bundle exec rails test"
 
       - name: Ejecutar pruebas en Flask
-        run: docker compose exec -T python_app pytest
+        run: docker compose exec -T flask_app pytest
 
       - name: Ver logs de Rails en caso de error
         if: failure()
@@ -67,13 +74,10 @@ jobs:
 
       - name: Ver logs de Flask en caso de error
         if: failure()
-        run: docker compose logs python_app
-
-      - name: Verificar logs de Rails
-        run: docker-compose logs rails_app
+        run: docker compose logs flask_app
 
       - name: Mostrar logs de todos los servicios
-        run: docker-compose logs
+        run: docker compose logs
 
       - name: Apagar los contenedores
         if: always()
@@ -88,37 +92,3 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('**/Gemfile.lock', '**/package-lock.json', '**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-build-
-
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: mydb
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-
-      rails_app:
-        build:
-          context: ./rails_app
-        ports:
-          - 3000:3000
-        depends_on:
-          - postgres
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Build and start services
-        run: docker-compose up -d
-
-      - name: Wait for Rails to be ready
-        run: ./wait-for-it.sh rails_app:3000 -- echo "Rails está listo"
-
-      - name: Verify database connection
-        run: docker-compose exec rails_app bash -c 'bundle exec rails runner "puts ActiveRecord::Base.connection.active? ? \"Connected!\" : \"Not connected!\""'
