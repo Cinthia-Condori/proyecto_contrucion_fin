@@ -50,10 +50,10 @@ jobs:
 
       - name: Verificar conexión a PostgreSQL desde Rails
         run: |
-          docker compose exec -T ruby_app bash -c 'bundle exec rails runner "puts ActiveRecord::Base.connection.active? ? \"Connected!\" : \"Not connected!\""' || exit 1
+          docker compose exec -T rails_app bash -c 'bundle exec rails runner "puts ActiveRecord::Base.connection.active? ? \"Connected!\" : \"Not connected!\""' || exit 1
 
       - name: Ejecutar migraciones de Rails
-        run: docker compose exec -T ruby_app bash -c "bundle exec rails db:migrate"
+        run: docker compose exec -T rails_app bash -c "bundle exec rails db:migrate"
 
       - name: Ejecutar pruebas en Rails
         run: docker compose exec -T rails_app bash -c "bundle exec rails test"
