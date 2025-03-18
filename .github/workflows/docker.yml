@@ -88,3 +88,37 @@ jobs:
           key: ${{ runner.os }}-build-${{ hashFiles('**/Gemfile.lock', '**/package-lock.json', '**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-build-
+
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: mydb
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+
+      rails_app:
+        build:
+          context: ./rails_app
+        ports:
+          - 3000:3000
+        depends_on:
+          - postgres
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and start services
+        run: docker-compose up -d
+
+      - name: Wait for Rails to be ready
+        run: ./wait-for-it.sh rails_app:3000 -- echo "Rails está listo"
+
+      - name: Verify database connection
+        run: docker-compose exec rails_app bash -c 'bundle exec rails runner "puts ActiveRecord::Base.connection.active? ? \"Connected!\" : \"Not connected!\""'
