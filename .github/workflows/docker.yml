@@ -43,16 +43,14 @@ jobs:
         run: sleep 10
 
       - name: Verificar contenedores en ejecución
-        run: docker ps
-
-      - name: Esperar a PostgreSQL
-        run: ./wait-for-it.sh postgres:5432 -- echo "PostgreSQL está listo"
+        run: docker-compose ps
 
       - name: Verificar si rails_app está corriendo
         run: |
-          if [ "$(docker inspect -f '{{.State.Running}}' rails_app 2>/dev/null)" != "true" ]; then
+          docker-compose ps rails_app
+          if [ "$(docker-compose ps -q rails_app | xargs docker inspect -f '{{.State.Running}}')" != "true" ]; then
             echo "rails_app no está corriendo"
-            docker ps  # Mostrar los contenedores en ejecución para depuración
+            docker-compose ps  # Mostrar los contenedores en ejecución para depuración
             exit 1
           fi
 
@@ -76,9 +74,6 @@ jobs:
       - name: Ver logs de Flask en caso de error
         if: failure()
         run: docker compose logs python_app
-
-      - name: Verificar logs de Rails
-        run: docker compose logs rails_app
 
       - name: Mostrar logs de todos los servicios
         run: docker compose logs
