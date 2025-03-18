@@ -14,7 +14,7 @@ services:
       - "5433:5432"  # Cambié el puerto de 5432 a 5433
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:management
     container_name: rabbitmq_server_dos
     networks:
       - app_network
