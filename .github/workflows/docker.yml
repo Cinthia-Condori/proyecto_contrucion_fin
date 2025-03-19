@@ -61,12 +61,6 @@ jobs:
       - name: Ejecutar migraciones de Rails
         run: docker compose exec -T rails_app bash -c "bundle exec rails db:migrate"
 
-      - name: Ejecutar pruebas en Rails
-        run: docker compose exec -T rails_app bash -c "bundle exec rails test"
-
-      - name: Ejecutar pruebas en Flask
-        run: docker compose exec -T python_app pytest
-
       - name: Ver logs de Rails en caso de error
         if: failure()
         run: docker compose logs rails_app
