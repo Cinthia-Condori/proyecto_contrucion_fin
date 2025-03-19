@@ -9,9 +9,9 @@ on:
       - main
 
 jobs:
-  construir_y_probar:
+  # Job 1: Construir y levantar servicios
+  construir_y_levantar:
     runs-on: ubuntu-latest
-
     services:
       base_de_datos:
         image: postgres:latest
@@ -26,7 +26,6 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
-
     steps:
       - name: Descargar código
         uses: actions/checkout@v3
@@ -35,6 +34,7 @@ jobs:
         run: |
           docker --version
           docker compose version
+
       - name: Construir y levantar contenedores
         run: docker compose up -d --build
 
@@ -44,47 +44,55 @@ jobs:
       - name: Verificar contenedores en ejecución
         run: docker ps
 
-      - name: Esperar a PostgreSQL
-        run: ./wait-for-it.sh postgres:5432 -- echo "PostgreSQL está listo"
+  # Job 2: Pruebas unitarias
+  pruebas_unitarias:
+    runs-on: ubuntu-latest
+    needs: construir_y_levantar # Este job depende de que "construir_y_levantar" termine
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v3
 
-      - name: Verificar si rails_app está corriendo
-        run: |
-          STATUS=$(docker inspect -f '{{.State.Status}}' rails_app || echo "notfound")
-          if [ "$STATUS" != "running" ]; then
-            echo "rails_app no está corriendo. Estado actual: $STATUS"
-            docker ps  # Mostrar los contenedores en ejecución para depuración
-            exit 1
-          fi
-      - name: Verificar conexión a PostgreSQL desde Rails
-        run: |
-          docker compose exec -T rails_app bash -c 'bundle exec rails runner "puts ActiveRecord::Base.connection.active? ? \"Connected!\" : \"Not connected!\""' || exit 1
-      - name: Ejecutar migraciones de Rails
-        run: docker compose exec -T rails_app bash -c "bundle exec rails db:migrate"
+      - name: Ejecutar pruebas unitarias de Rails
+        run: docker compose exec -T rails_app bash -c "bundle exec rspec spec/models"
 
-      - name: Ver logs de Rails en caso de error
-        if: failure()
-        run: docker compose logs rails_app
+      - name: Ejecutar pruebas unitarias de Flask
+        run: docker compose exec -T python_app pytest tests/unit
 
-      - name: Ver logs de Flask en caso de error
-        if: failure()
-        run: docker compose logs python_app
+  # Job 3: Pruebas de integración
+  pruebas_integracion:
+    runs-on: ubuntu-latest
+    needs: construir_y_levantar # Este job depende de que "construir_y_levantar" termine
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v3
 
-      - name: Verificar logs de Rails
-        run: docker compose logs rails_app
+      - name: Ejecutar pruebas de integración de Rails
+        run: docker compose exec -T rails_app bash -c "bundle exec rspec spec/integration"
 
-      - name: Mostrar logs de todos los servicios
-        run: docker compose logs
+      - name: Ejecutar pruebas de integración de Flask
+        run: docker compose exec -T python_app pytest tests/integration
 
-      - name: Apagar los contenedores
-        if: always()
-        run: docker compose down
+  # Job 4: Análisis de código estático (DESACTIVADO)
+  # analisis_codigo:
+  #   runs-on: ubuntu-latest
+  #   needs: construir_y_levantar # Este job depende de que "construir_y_levantar" termine
+  #   steps:
+  #     - name: Descargar código
+  #       uses: actions/checkout@v3
 
-      - name: Caché de dependencias
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.bundle
-          key: ${{ runner.os }}-build-${{ hashFiles('**/Gemfile.lock', '**/package-lock.json', '**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-build-
+  #     - name: Ejecutar RuboCop para Rails
+  #       run: docker compose exec -T rails_app bash -c "bundle exec rubocop"
+
+  #     - name: Ejecutar Flake8 para Flask
+  #       run: docker compose exec -T python_app flake8 app.py
+
+  # Job 5: Despliegue (opcional)
+  despliegue:
+    runs-on: ubuntu-latest
+    needs: [pruebas_unitarias, pruebas_integracion] # Este job depende de que los anteriores terminen
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v3
+
+      - name: Desplegar aplicación
+        run: echo "Desplegando la aplicación..."
